@@ -3,11 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <title>Cifrado Críptico</title>
+  <link rel="icon" type="image/png" href="icon.png">
   <style>
     /* Importar la fuente Balatro.ttf desde la misma carpeta */
     @font-face {
       font-family: "Balatro";
-      src: url("Balatro.png") format("truetype");
+      src: url("Balatro.ttf") format("truetype");
     }
 
     /* Estilo Material 3 oscuro con onda críptica */
@@ -30,13 +31,6 @@
       padding: 30px;
       width: 400px;
       text-align: center;
-    }
-
-    h1 {
-      font-size: 1.5rem;
-      margin-bottom: 20px;
-      color: #00ffc3;
-      letter-spacing: 2px;
     }
 
     label {
@@ -92,7 +86,6 @@
 </head>
 <body>
   <div class="card">
-
     <label for="mode">Modo:</label>
     <select id="mode">
       <option value="encode">Codificar</option>
@@ -111,13 +104,13 @@
   </div>
 
   <script>
-    // Definir los caracteres permitidos en orden
+    // Definir los caracteres permitidos en orden (incluye espacio ' ')
     const chars = [
       ..."ABCDEFGHIJKLMNÑOPQRSTUVWXYZ", // 0-27
       ..."abcdefghijklmnñopqrstuvwxyz", // 28-55
-      ..."0123456789",                 // 56-65
-      ..."¡!¿?,;.:-_#\"%$/^+*()<>",    // símbolos extra incluidos
-      ..."ÁÉÍÓÚáéíóú"                  // con tildes
+      ..."0123456789",                  // 56-65
+      ..."¡!¿?,;.:-_#\"%$/^+*()<> ",    // símbolos extra + espacio
+      ..."ÁÉÍÓÚáéíóú"                   // con tildes
     ];
 
     function process() {
