@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Cifrado Críptico</title>
+  <style>
+    /* Importar la fuente Balatro.ttf desde la misma carpeta */
+    @font-face {
+      font-family: "Balatro";
+      src: url("Balatro.png") format("truetype");
+    }
+
+    /* Estilo Material 3 oscuro con onda críptica */
+    body {
+      background-color: #121212;
+      color: #e0e0e0;
+      font-family: "Balatro", sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .card {
+      background: #1e1e1e;
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(0, 255, 200, 0.2);
+      padding: 30px;
+      width: 400px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      color: #00ffc3;
+      letter-spacing: 2px;
+    }
+
+    label {
+      display: block;
+      margin: 10px 0 5px;
+      text-align: left;
+      color: #bbb;
+    }
+
+    select, input, textarea, button {
+      width: 100%;
+      margin-bottom: 15px;
+      padding: 10px;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+      font-size: 1rem;
+      font-family: "Balatro", sans-serif;
+    }
+
+    textarea {
+      resize: none;
+      height: 80px;
+    }
+
+    select, input, textarea {
+      background: #2a2a2a;
+      color: #e0e0e0;
+    }
+
+    button {
+      background: #00ffc3;
+      color: #121212;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #00cfa3;
+    }
+
+    .output {
+      background: #000;
+      border: 2px solid #00ffc3; /* línea sólida */
+      padding: 10px;
+      border-radius: 10px;
+      margin-top: 15px;
+      word-wrap: break-word;
+      font-family: "Balatro", sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+
+    <label for="mode">Modo:</label>
+    <select id="mode">
+      <option value="encode">Codificar</option>
+      <option value="decode">Decodificar</option>
+    </select>
+
+    <label for="message">Mensaje:</label>
+    <textarea id="message"></textarea>
+
+    <label for="key" id="keyLabel">Número de cifrado (1-99):</label>
+    <input type="number" id="key" min="1" max="99">
+
+    <button onclick="process()">Procesar</button>
+
+    <div id="output" class="output"></div>
+  </div>
+
+  <script>
+    // Definir los caracteres permitidos en orden
+    const chars = [
+      ..."ABCDEFGHIJKLMNÑOPQRSTUVWXYZ", // 0-27
+      ..."abcdefghijklmnñopqrstuvwxyz", // 28-55
+      ..."0123456789",                 // 56-65
+      ..."¡!¿?,;.:-_#\"%$/^+*()<>",    // símbolos extra incluidos
+      ..."ÁÉÍÓÚáéíóú"                  // con tildes
+    ];
+
+    function process() {
+      const mode = document.getElementById("mode").value;
+      const message = document.getElementById("message").value;
+      const keyInput = document.getElementById("key");
+      const outputDiv = document.getElementById("output");
+
+      if (!message) {
+        outputDiv.innerText = "⚠️ Ingrese un mensaje.";
+        return;
+      }
+
+      let result = "";
+
+      if (mode === "encode") {
+        const key = parseInt(keyInput.value);
+        if (isNaN(key) || key < 1 || key > 99) {
+          outputDiv.innerText = "⚠️ Ingrese un número de cifrado válido (1-99).";
+          return;
+        }
+
+        for (let char of message) {
+          const index = chars.indexOf(char);
+          if (index === -1) {
+            result += char; // deja caracteres desconocidos igual
+          } else {
+            const newIndex = (index + key) % chars.length;
+            result += chars[newIndex];
+          }
+        }
+        // agregar la clave al final en 2 dígitos
+        result += key.toString().padStart(2, "0");
+
+      } else if (mode === "decode") {
+        // extraer la clave de los últimos 2 dígitos
+        const key = parseInt(message.slice(-2));
+        const text = message.slice(0, -2);
+
+        for (let char of text) {
+          const index = chars.indexOf(char);
+          if (index === -1) {
+            result += char;
+          } else {
+            let newIndex = (index - key) % chars.length;
+            if (newIndex < 0) newIndex += chars.length;
+            result += chars[newIndex];
+          }
+        }
+      }
+
+      outputDiv.innerText = result;
+    }
+
+    // Mostrar/ocultar campo de clave
+    document.getElementById("mode").addEventListener("change", (e) => {
+      const keyLabel = document.getElementById("keyLabel");
+      const keyInput = document.getElementById("key");
+      if (e.target.value === "encode") {
+        keyLabel.style.display = "block";
+        keyInput.style.display = "block";
+      } else {
+        keyLabel.style.display = "none";
+        keyInput.style.display = "none";
+      }
+    });
+  </script>
+</body>
+</html>
